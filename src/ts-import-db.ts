@@ -48,7 +48,7 @@ class TsImportDbMemory {
     }
 
     public reloadConfig() {
-        //this.loadConfig();
+        this.loadConfig();
     }
 
     public loadConfig() {

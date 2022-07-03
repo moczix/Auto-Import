@@ -32,8 +32,9 @@ export class ImportFixer {
         let importObj: vscode.Uri = imports[0].file;
         let importName: string = imports[0].name;
 
+        const undiscoveredFirst = imports.find((imp: any) => !imp.file.discovered)
 
-        const tsImportPath = TsImportDb.getTsImport(importObj.fsPath, imports[0].workspace);
+        const tsImportPath = TsImportDb.getTsImport(undiscoveredFirst.file.fsPath, imports[0].workspace);
         if (!tsImportPath){
             return edit;
         }
