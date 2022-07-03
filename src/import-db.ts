@@ -29,9 +29,8 @@ export class ImportDb {
         let matcher = (i: ImportObject) => i.name === name;
 
         if (workspace !== undefined) {
-            matcher = (i: ImportObject) => i.name === name && i.workspace.name === workspace.name;
+            matcher = (i: ImportObject) => i.name === name && i.workspace.name === workspace.name && (!(i.file as any).discovered);
         }
-
         return ImportDb.imports.filter(matcher);
     }
 

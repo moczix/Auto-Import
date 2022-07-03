@@ -42,7 +42,7 @@ export class ImportCompletion implements vscode.CompletionItemProvider {
 
             let found = ImportDb.all()
                 .filter(matcher);
-
+            
             return resolve(found.map(i => this.buildCompletionItem(i, document)));
         })
     }
@@ -63,7 +63,6 @@ export class ImportCompletion implements vscode.CompletionItemProvider {
 
     private createDescription(imp: ImportObject, document: vscode.TextDocument) {
         let path = (imp: ImportObject) => {
-
             if ((<any>imp.file).discovered) {
                 return imp.file.fsPath;
             }

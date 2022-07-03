@@ -62,7 +62,6 @@ export class AutoImport {
     }
 
     public attachFileWatcher(): void {
-
         var multiWorkspace = vscode.workspace.workspaceFolders.length > 0;
 
         if (multiWorkspace === true) {
