@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 
 import { ErrorHelper } from './helpers/error-helper';
 import { AutoImport } from './auto-import';
+import { TsImportDb } from './ts-import-db';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -19,12 +20,14 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
 
+        TsImportDb.createTsWatcher();
+
         extension.attachCommands();
 
         extension.attachFileWatcher();
 
         extension.scanIfRequired();
-        
+
 
     } catch (error) {
         ErrorHelper.handle(error);

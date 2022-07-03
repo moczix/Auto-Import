@@ -1,7 +1,7 @@
-import { PathHelper } from './helpers/path-helper';
 import * as vscode from 'vscode';
 
 import { ImportDb, ImportObject } from './import-db';
+import { TsImportDb } from './ts-import-db';
 
 export interface Context {
     document: vscode.TextDocument;
@@ -56,12 +56,13 @@ export class ImportAction {
 
     private actionHandler(context: Context): vscode.Command[] {
         let path = (imp: ImportObject) => {
+
             if ((<any>imp.file).discovered) {
                 return imp.file.fsPath;
-            } else {
-                let rp = PathHelper.normalisePath(
-                    PathHelper.getRelativePath(context.document.uri.fsPath, imp.file.fsPath));
-                return rp;
+            }
+            const pathFromTs = TsImportDb.getTsImport(imp.file.fsPath, imp.workspace)
+            if (pathFromTs){ 
+                return pathFromTs;
             }
         };
 

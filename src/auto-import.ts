@@ -96,7 +96,6 @@ export class AutoImport {
         } else {
 
             let glob = vscode.workspace.getConfiguration('autoimport').get<string>('filesToScan');
-
             let watcher = vscode.workspace.createFileSystemWatcher(glob);
 
             let workspace = undefined;

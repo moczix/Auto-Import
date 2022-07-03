@@ -1,6 +1,9 @@
 ### Auto Import
 
-Automatically finds, parses and provides code actions and code completion for all available imports. Works with Typescript and TSX.
+This is forked version of https://github.com/soates/Auto-Import extension, but this version only provide imports based on tsconfig.compilerOptions.paths{}
+
+###
+currently it doesnt handle extends of tsconfig.Json so we read tsconfig.base.json to get compilerOptions.paths and we  open tsconfig.json to get baseUrl
 
 #### Multi-root workspace Ready!
 
@@ -11,6 +14,8 @@ Automatically finds, parses and provides code actions and code completion for al
 ----
 
 ## Configuration
+
+> fileWithTsImports - tsconfig file name which container paths property which you want to use in autocompletion
 
 > filesToScan - Glob for which files in your workspace to scan, defaults to '**/*.{ts, tsx}'
 

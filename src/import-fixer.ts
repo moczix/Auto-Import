@@ -2,6 +2,7 @@ import * as vscode from 'vscode'
 import * as path from 'path';
 
 import { ImportObject } from './import-db';
+import { TsImportDb } from './ts-import-db';
 
 export class ImportFixer {
 
@@ -28,29 +29,32 @@ export class ImportFixer {
     public getTextEdit(document: vscode.TextDocument, imports: Array<ImportObject>) {
 
         let edit: vscode.WorkspaceEdit = new vscode.WorkspaceEdit();
-        let importObj: vscode.Uri | any = imports[0].file;
+        let importObj: vscode.Uri = imports[0].file;
         let importName: string = imports[0].name;
 
-        let relativePath = this.normaliseRelativePath(importObj, this.getRelativePath(document, importObj));
 
-        if (this.alreadyResolved(document, relativePath, importName)) {
+        const tsImportPath = TsImportDb.getTsImport(importObj.fsPath, imports[0].workspace);
+        if (!tsImportPath){
             return edit;
         }
 
-        if (this.shouldMergeImport(document, relativePath)) {
+        if (this.alreadyResolved(document, tsImportPath, importName)) {
+            return edit;
+        }
+        if (this.shouldMergeImport(document, tsImportPath)) {
             edit.replace(document.uri, new vscode.Range(0, 0, document.lineCount, 0),
-                this.mergeImports(document, edit, importName, importObj, relativePath));
+                this.mergeImports(document, edit, importName, importObj, tsImportPath));
         } else {
             edit.insert(document.uri, new vscode.Position(0, 0),
-                this.createImportStatement(imports[0].name, relativePath, true));
+                this.createImportStatement(imports[0].name, tsImportPath, true));
         }
-
+        
         return edit;
     }
 
-    private alreadyResolved(document: vscode.TextDocument, relativePath, importName) {
+    private alreadyResolved(document: vscode.TextDocument, tsImportPath, importName) {
 
-        let exp = new RegExp('(?:import\ \{)(?:.*)(?:\}\ from\ \')(?:' + relativePath + ')(?:\'\;)')
+        let exp = new RegExp('(?:import\ \{)(?:.*)(?:\}\ from\ \')(?:' + tsImportPath + ')(?:\'\;)')
 
         let currentDoc = document.getText();
 
@@ -63,7 +67,7 @@ export class ImportFixer {
         return false;
     }
 
-    private shouldMergeImport(document: vscode.TextDocument, relativePath): boolean {
+    private shouldMergeImport(document: vscode.TextDocument, tsImportPath): boolean {
         let currentDoc = document.getText();
 
         let isCommentLine = (text: string): boolean => {
@@ -71,14 +75,14 @@ export class ImportFixer {
             return firstTwoLetters === '//' || firstTwoLetters === '/*';
         }
 
-        return currentDoc.indexOf(relativePath) !== -1 && !isCommentLine(currentDoc);
+        return currentDoc.indexOf(tsImportPath) !== -1 && !isCommentLine(currentDoc);
     }
 
-    private mergeImports(document: vscode.TextDocument, edit: vscode.WorkspaceEdit, name, file, relativePath: string) {
+    private mergeImports(document: vscode.TextDocument, edit: vscode.WorkspaceEdit, name, file, tsImportPath: string) {
 
         let exp = this.useSemiColon === true ?
-            new RegExp('(?:import\ \{)(?:.*)(?:\}\ from\ \')(?:' + relativePath + ')(?:\'\;)') :
-            new RegExp('(?:import\ \{)(?:.*)(?:\}\ from\ \')(?:' + relativePath + ')(?:\'\)')
+            new RegExp('(?:import\ \{)(?:.*)(?:\}\ from\ \')(?:' + tsImportPath + ')(?:\'\;)') :
+            new RegExp('(?:import\ \{)(?:.*)(?:\}\ from\ \')(?:' + tsImportPath + ')(?:\'\)')
 
         let currentDoc = document.getText();
 
@@ -92,13 +96,13 @@ export class ImportFixer {
                 /{|}|from|import|'|"| |/gi;
 
             workingString = workingString
-                .replace(replaceTarget, '').replace(relativePath, '');
+                .replace(replaceTarget, '').replace(tsImportPath, '');
 
             let importArray = workingString.split(',');
 
             importArray.push(name)
 
-            let newImport = this.createImportStatement(importArray.join(', '), relativePath);
+            let newImport = this.createImportStatement(importArray.join(', '), tsImportPath);
 
             currentDoc = currentDoc.replace(exp, newImport);
         }
@@ -129,42 +133,5 @@ export class ImportFixer {
         }
 
         return returnStr;
-    }
-
-    private getRelativePath(document, importObj: vscode.Uri | any): string {
-        return importObj.discovered ? importObj.fsPath :
-            path.relative(path.dirname(document.fileName), importObj.fsPath);
-    }
-
-    private normaliseRelativePath(importObj, relativePath: string): string {
-
-        let removeFileExtenion = (rp) => {
-            if (rp) {
-                rp = rp.substring(0, rp.lastIndexOf('.'))
-            }
-            return rp;
-        }
-
-        let makeRelativePath = (rp) => {
-
-            let preAppend = './';
-
-            if (!rp.startsWith(preAppend)) {
-                rp = preAppend + rp;
-            }
-
-            if (/^win/.test(process.platform)) {
-                rp = rp.replace(/\\/g, '/');
-            }
-
-            return rp;
-        }
-
-        if (importObj.discovered === undefined) {
-            relativePath = makeRelativePath(relativePath);
-            relativePath = removeFileExtenion(relativePath);
-        }
-
-        return relativePath;
     }
 }

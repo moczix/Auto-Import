@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 
 import { ImportDb } from './import-db';
 import { AutoImport } from './auto-import';
+import { TsImportDb } from './ts-import-db';
 
 export class ImportScanner {
 
@@ -120,6 +121,7 @@ export class ImportScanner {
                     m.replace('export', '').replace('class', '');
 
                 ImportDb.saveImport(workingFile, data, file, workspace);
+                TsImportDb.saveTsImport(file, workspace)
             });
         }
 
@@ -129,6 +131,7 @@ export class ImportScanner {
                     m.replace('export', '').replace('interface', '');
 
                 ImportDb.saveImport(workingFile, data, file, workspace);
+                TsImportDb.saveTsImport(file, workspace)
             });
         }
 
@@ -139,6 +142,7 @@ export class ImportScanner {
                     m.replace('export', '').replace('let', '').replace('var', '').replace('const', '').replace('enum', '').replace('type', '');
 
                 ImportDb.saveImport(workingFile, data, file, workspace);
+                TsImportDb.saveTsImport(file, workspace)
             });
         }
     }

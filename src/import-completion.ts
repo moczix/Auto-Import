@@ -1,9 +1,8 @@
-import { PathHelper } from './helpers/path-helper';
 import { ImportDb, ImportObject } from './import-db';
 import { ImportFixer } from './import-fixer';
 
 import * as vscode from 'vscode';
-import { workspace } from 'vscode';
+import { TsImportDb } from './ts-import-db';
 
 
 export class ImportCompletion implements vscode.CompletionItemProvider {
@@ -64,12 +63,13 @@ export class ImportCompletion implements vscode.CompletionItemProvider {
 
     private createDescription(imp: ImportObject, document: vscode.TextDocument) {
         let path = (imp: ImportObject) => {
+
             if ((<any>imp.file).discovered) {
                 return imp.file.fsPath;
-            } else {
-                let rp = PathHelper.normalisePath(
-                    PathHelper.getRelativePath(document.uri.fsPath, imp.file.fsPath));
-                return rp;
+            }
+            const pathFromTs = TsImportDb.getTsImport(imp.file.fsPath, imp.workspace)
+            if (pathFromTs){ 
+                return pathFromTs;
             }
         };
         return path(imp);

@@ -1,11 +1,11 @@
 {
-    "name": "autoimport",
-    "displayName": "Auto Import",
-    "description": "Automatically finds, parses and provides code actions and code completion for all available imports. Works with Typescript and TSX",
-    "version": "1.5.3",
-    "publisher": "steoates",
+    "name": "autoimport-ts-paths",
+    "displayName": "Auto Import TS Paths",
+    "description": "Automatically finds, parses and provides code actions and code completion for all available imports. Works with Typescript and TSX - ONLY TS PATHS",
+    "version": "1.6.0",
+    "publisher": "moczix",
     "engines": {
-        "vscode": "^1.17.0"
+        "vscode": "^1.1.37"
     },
     "galleryBanner": {
         "color": "#2d4794",
@@ -35,12 +35,17 @@
         ],
         "configuration": {
             "type": "object",
-            "title": "Auto Import configuration",
+            "title": "Auto Import TS Paths configuration",
             "properties": {
                 "autoimport.filesToScan": {
                     "type": "string",
                     "default": "**/*.{ts,tsx}",
                     "description": "Glob for files to watch and scan, e.g ./src/** ./src/app/**/*.ts. Defaults to **/*.{ts,tsx}"
+                },
+                "autoimport.fileWithTsImports": {
+                    "type": "string",
+                    "default": "tsconfig.base.json",
+                    "description": "tsconfig which contain paths: {}"
                 },
                 "autoimport.showNotifications": {
                     "type": "boolean",
@@ -75,6 +80,7 @@
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
         "compile": "tsc -watch -p ./",
+        "package": "vsce package",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "node ./node_modules/vscode/bin/test"
     },
