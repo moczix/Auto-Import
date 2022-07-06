@@ -6,6 +6,9 @@ import { ImportDb } from './import-db';
 import { ImportCompletion } from './import-completion';
 
 import * as vscode from 'vscode';
+import { TsReferences } from './ts-references';
+import { Project } from "ts-morph";
+import { join } from 'path';
 
 export class AutoImport {
 
@@ -52,13 +55,20 @@ export class AutoImport {
 
         let completetion = vscode.languages.registerCompletionItemProvider('typescript', new ImportCompletion(this.context, vscode.workspace.getConfiguration('autoimport').get<boolean>('autoComplete')), '');
 
+
+        const project = new Project({
+            tsConfigFilePath: join(vscode.workspace.workspaceFolders[0].uri.fsPath, 'tsconfig.base.json')
+        })
+
+        let references = vscode.languages.registerReferenceProvider('typescript', new TsReferences(project))
+
         AutoImport.statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 1);
 
         AutoImport.statusBar.text = '{..} : Scanning.. ';
 
         AutoImport.statusBar.show();
 
-        this.context.subscriptions.push(importScanner, importFixer, nodeScanner, codeActionFixer, AutoImport.statusBar, completetion);
+        this.context.subscriptions.push(importScanner, importFixer, nodeScanner, codeActionFixer, AutoImport.statusBar, completetion, references);
     }
 
     public attachFileWatcher(): void {

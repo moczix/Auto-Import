@@ -23,7 +23,6 @@ export class ImportDb {
     }
 
     public static getImport(name: string, doc: vscode.Uri): Array<ImportObject> {
-
         let workspace = vscode.workspace.getWorkspaceFolder(doc);
 
         let matcher = (i: ImportObject) => i.name === name;
