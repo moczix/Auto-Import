@@ -36,9 +36,9 @@ export class ImportAction {
             let imp = diagnostic.message.replace('Typescript Cannot find name', '')
                 .replace('Cannot find name', '')
                 .replace(/{|}|from|import|'|"| |\.|;/gi, '')
+                .split('Didyoumean')[0]
 
             try {
-
                 let found = ImportDb.getImport(imp, context.document.uri);
 
                 if (found) {
