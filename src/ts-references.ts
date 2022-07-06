@@ -3,7 +3,8 @@ import * as vscode from "vscode";
 
 
 export class TsReferences implements vscode.ReferenceProvider {
-  constructor(private _tsMorphProject: Project) {}
+  constructor(private _tsMorphProject: Project) {
+  }
 
   public provideReferences(
     document: vscode.TextDocument,

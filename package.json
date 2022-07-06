@@ -2,7 +2,7 @@
     "name": "autoimport-ts-paths",
     "displayName": "Auto Import TS Paths",
     "description": "Automatically finds, parses and provides code actions and code completion for all available imports. Works with Typescript and TSX - ONLY TS PATHS",
-    "version": "1.6.0",
+    "version": "1.6.1",
     "publisher": "moczix",
     "engines": {
         "vscode": "^1.68.1"
@@ -81,18 +81,16 @@
         "vscode:prepublish": "tsc -p ./",
         "compile": "tsc -watch -p ./",
         "package": "vsce package",
-        "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
         "@types/node": "^18.0.0",
         "@types/vscode": "^1.68.1",
-        "ts-morph": "^15.1.0",
         "typescript": "^4.7.4",
-        "vsce": "^2.9.2",
-        "vscode": "^1.1.37"
+        "vsce": "^2.9.2"
     },
     "dependencies": {
-        "lodash": "^4.17.21"
+        "lodash": "^4.17.21",
+        "ts-morph": "^15.1.0"
     }
 }
