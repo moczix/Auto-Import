@@ -5,7 +5,7 @@
     "version": "1.6.0",
     "publisher": "moczix",
     "engines": {
-        "vscode": "^1.1.37"
+        "vscode": "^1.68.1"
     },
     "galleryBanner": {
         "color": "#2d4794",
