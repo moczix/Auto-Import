@@ -20,7 +20,7 @@ export class ImportAction {
         let actionContext = this.createContext(document, range, context, token);
 
         if (this.canHandleAction(actionContext)) {
-            return this.actionHandler(actionContext);
+            return this.actionHandler(actionContext, document);
         }
     }
 
@@ -54,13 +54,13 @@ export class ImportAction {
         return false;
     }
 
-    private actionHandler(context: Context): vscode.Command[] {
+    private actionHandler(context: Context, document: vscode.TextDocument): vscode.Command[] {
         let path = (imp: ImportObject) => {
 
             if ((<any>imp.file).discovered) {
                 return imp.file.fsPath;
             }
-            const pathFromTs = TsImportDb.getTsImport(imp.file.fsPath, imp.workspace)
+            const pathFromTs = TsImportDb.getTsImport(imp.file.fsPath, document, imp.workspace)
             if (pathFromTs){ 
                 return pathFromTs;
             }

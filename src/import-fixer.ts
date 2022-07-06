@@ -27,14 +27,12 @@ export class ImportFixer {
     }
 
     public getTextEdit(document: vscode.TextDocument, imports: Array<ImportObject>) {
-
         let edit: vscode.WorkspaceEdit = new vscode.WorkspaceEdit();
         let importObj: vscode.Uri = imports[0].file;
         let importName: string = imports[0].name;
 
         const undiscoveredFirst = imports.find((imp: any) => !imp.file.discovered)
-
-        const tsImportPath = TsImportDb.getTsImport(undiscoveredFirst.file.fsPath, imports[0].workspace);
+        const tsImportPath = TsImportDb.getTsImport(undiscoveredFirst.file.fsPath, document, imports[0].workspace);
         if (!tsImportPath){
             return edit;
         }

@@ -113,7 +113,8 @@ export class ImportScanner {
             varMatches = data.match(/(export var) ([a-zA-z])\w+/g),
             constMatches = data.match(/(export const) ([a-zA-z])\w+/g),
             enumMatches = data.match(/(export enum) ([a-zA-z])\w+/g),
-            typeMatches = data.match(/(export type) ([a-zA-z])\w+/g)
+            typeMatches = data.match(/(export type) ([a-zA-z])\w+/g),
+            functionMatches = data.match(/(export function) ([a-zA-z])\w+/g)
 
         if (classMatches) {
             classMatches.forEach(m => {
@@ -135,11 +136,11 @@ export class ImportScanner {
             });
         }
 
-        if (propertyMatches || varMatches || constMatches || enumMatches || typeMatches) {
+        if (propertyMatches || varMatches || constMatches || enumMatches || typeMatches || functionMatches) {
 
-            [].concat(propertyMatches, varMatches, constMatches, enumMatches, typeMatches).filter(m => m).forEach(m => {
+            [].concat(propertyMatches, varMatches, constMatches, enumMatches, typeMatches, functionMatches).filter(m => m).forEach(m => {
                 let workingFile: string =
-                    m.replace('export', '').replace('let', '').replace('var', '').replace('const', '').replace('enum', '').replace('type', '');
+                    m.replace('export', '').replace('let', '').replace('var', '').replace('const', '').replace('enum', '').replace('type', '').replace('function', '');;
 
                 ImportDb.saveImport(workingFile, data, file, workspace);
                 TsImportDb.saveTsImport(file, workspace)

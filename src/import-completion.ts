@@ -66,7 +66,7 @@ export class ImportCompletion implements vscode.CompletionItemProvider {
             if ((<any>imp.file).discovered) {
                 return imp.file.fsPath;
             }
-            const pathFromTs = TsImportDb.getTsImport(imp.file.fsPath, imp.workspace)
+            const pathFromTs = TsImportDb.getTsImport(imp.file.fsPath, document, imp.workspace)
             if (pathFromTs){ 
                 return pathFromTs;
             }

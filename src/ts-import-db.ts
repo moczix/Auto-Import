@@ -1,7 +1,7 @@
 import * as FS from 'fs';
 import * as vscode from 'vscode';
 import * as _ from 'lodash';
-import { join } from 'path';
+import { dirname, join, relative } from 'path';
 
 
 export type TsImportsPaths = Record<string, string[]>;
@@ -112,8 +112,61 @@ export class TsImportDb {
         }
     }
 
-    public static getTsImport(fsPath: string, workspace: vscode.WorkspaceFolder): string | undefined {
+    public static getTsImport(fsPath: string, document: vscode.TextDocument, workspace: vscode.WorkspaceFolder): string | undefined {
+        
+        const nearestTsConfigPathInImport: string | undefined = this.findNearestTsConfigPath(dirname(fsPath), workspace);
+        const nearestTsConfigPathInDocument: string | undefined = this.findNearestTsConfigPath(dirname(document.fileName), workspace)
+        
+        // if module which we import is in the same library we wanna use relative path
+        if (nearestTsConfigPathInImport && nearestTsConfigPathInDocument && nearestTsConfigPathInImport === nearestTsConfigPathInDocument){
+            return this.getRelativePath(fsPath, document);
+        }
+        
         return TsImportDbMemory.instance.storage[workspace.uri.fsPath]?.[fsPath];
+    }
+
+    private static getRelativePath(fsPath: string, document: vscode.TextDocument) {
+        let removeFileExtenion = (rp) => {
+            if (rp) {
+                rp = rp.substring(0, rp.lastIndexOf('.'))
+            }
+            return rp;
+        }
+
+        let makeRelativePath = (rp) => {
+
+            let preAppend = './';
+
+            if (!rp.startsWith(preAppend)) {
+                rp = preAppend + rp;
+            }
+
+            if (/^win/.test(process.platform)) {
+                rp = rp.replace(/\\/g, '/');
+            }
+
+            return rp;
+        }
+
+        let relativePath = relative(dirname(document.fileName), fsPath);
+
+        relativePath = makeRelativePath(relativePath);
+        relativePath = removeFileExtenion(relativePath);
+
+        return relativePath;
+
+    }
+
+    private static findNearestTsConfigPath(fsPath: string, workspace: vscode.WorkspaceFolder): string | undefined {
+        if (workspace.uri.fsPath === fsPath){
+            return undefined;
+        }
+        // this should check nearest tsconfig which include this file
+        const tsConfigPath = join(fsPath, 'tsconfig.json');
+        if (FS.existsSync(tsConfigPath)) {
+            return tsConfigPath;
+        }
+        return this.findNearestTsConfigPath(join(fsPath, '../'), workspace);
     }
 
 }

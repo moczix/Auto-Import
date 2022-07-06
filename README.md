@@ -1,6 +1,6 @@
 ### Auto Import
 
-This is forked version of https://github.com/soates/Auto-Import extension, but this version only provide imports based on tsconfig.compilerOptions.paths{}
+This is forked version of https://github.com/soates/Auto-Import extension, but this version only provide imports based on tsconfig.compilerOptions.paths{} or relative if the import is in the same dir as nearest tsconfig.json
 
 ###
 currently it doesnt handle extends of tsconfig.Json so we read tsconfig.base.json to get compilerOptions.paths and we  open tsconfig.json to get baseUrl
